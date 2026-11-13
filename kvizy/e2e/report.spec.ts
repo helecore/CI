@@ -36,7 +36,7 @@ test("Nahlásit kvíz uloží hlášení do databáze, kvíz zůstane v katalogu
   await dialog.getByLabel(/^Doplnění/).fill(note);
   await dialog.getByRole("button", { name: "Odeslat hlášení" }).click();
   await expect(dialog.getByRole("status")).toContainText("Hlášení jsme uložili");
-  await dialog.getByRole("button", { name: "Zavřít" }).click();
+  await dialog.getByRole("button", { name: "Zavřít", exact: true }).and(dialog.locator("[data-slot=dialog-footer] button")).click();
   await expect(dialog).toBeHidden();
 
   const saved = (await adminReports(request)).find((r) => r.note === note);

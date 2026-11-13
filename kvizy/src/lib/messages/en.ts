@@ -1,4 +1,4 @@
-export default {
+const en = {
   "brand": "Quizzes for Friends",
   "meta": "Find an online quiz that suits your group’s mood.",
   "interfaceLanguage": "Interface language",
@@ -124,3 +124,5 @@ export default {
     "other": "Other"
   }
 };
+
+export default en;
