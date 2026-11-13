@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 import { describe, expect, it } from "vitest";
 import { applyMigrations, readMigrations, type MigrationClient } from "./migrate-core.mjs";
+import { importQuizzes } from "../../scripts/import-quizzes.mjs";
 import { urlKey } from "./quiz";
 
 const REQUESTED_LINKS = [
@@ -58,6 +59,46 @@ describe("migrations", () => {
       expect(rows, link).toHaveLength(1);
       const seed = seeds.find((s) => urlKey(s.url) === key);
       expect(rows[0].is_collection, link).toBe(seed?.is_collection ?? false);
+    }
+  });
+
+  it("imports each direct URL once and preserves quiz IDs, clicks and reports on repeat", async () => {
+    const db = new PGlite();
+    try {
+      const connection = client(db);
+      await applyMigrations(connection, await readMigrations());
+      const direct = "idrlabs.com/gumball-character/test.php";
+      await db.query(`insert into quizzes (title, url, url_key, language, format, types, clicks)
+        values ('Previously added quiz', 'http://idrlabs.com/gumball-character/test.php/#start', $1, 'en', 'text', array['personality'], 7)`, [direct]);
+      await db.query(`insert into quiz_reports (quiz_id, reason)
+        select id, 'wrong_category' from quizzes where url_key in ($1, 'idrlabs.com')`, [direct]);
+      const snapshot = () => db.query(`select q.id, q.clicks, q.url_key, r.id as report_id
+        from quizzes q join quiz_reports r on r.quiz_id = q.id order by q.id`);
+      const before = (await snapshot()).rows;
+
+      const first = await importQuizzes(connection);
+      expect(first).toEqual({
+        "IDRlabs (en)": { inserted: 9, existing: 1 },
+        "IDRlabs (ja)": { inserted: 2, existing: 0 },
+        "IDRlabs (zh)": { inserted: 2, existing: 0 },
+        "Meiji (ja)": { inserted: 3, existing: 0 },
+        "JAXA (ja)": { inserted: 2, existing: 0 },
+        "JetPunk (zh)": { inserted: 4, existing: 0 },
+        "Wordwall (zh)": { inserted: 2, existing: 0 },
+      });
+      expect(await count(db, "is_hidden and url_key = 'idrlabs.com'")).toBe(1);
+      expect(await count(db, "language = 'ja' and not is_hidden")).toBe(7);
+      expect(await count(db, "language = 'zh' and not is_hidden")).toBe(8);
+      expect((await snapshot()).rows).toEqual(before);
+      const total = await count(db);
+      const second = await importQuizzes(connection);
+      for (const [group, counts] of Object.entries(first)) {
+        expect(second[group]).toEqual({ inserted: 0, existing: counts.inserted + counts.existing });
+      }
+      expect(await count(db)).toBe(total);
+      expect((await snapshot()).rows).toEqual(before);
+    } finally {
+      await db.close();
     }
   });
 

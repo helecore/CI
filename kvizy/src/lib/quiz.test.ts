@@ -60,16 +60,22 @@ describe("validateQuizInput", () => {
     expect(validateQuizInput({ ...valid, url: "example.com/a" }).ok).toBe(false);
   });
 
+  it("accepts German, Japanese and Chinese language codes", () => {
+    for (const language of ["de", "ja", "zh"]) {
+      expect(validateQuizInput({ ...valid, language })).toMatchObject({ ok: true, value: { language } });
+    }
+  });
+
   it("rejects unknown enum values", () => {
     expect(validateQuizInput({ ...valid, format: "video" }).ok).toBe(false);
     expect(validateQuizInput({ ...valid, types: ["funny"] }).ok).toBe(false);
-    expect(validateQuizInput({ ...valid, language: "de" }).ok).toBe(false);
+    expect(validateQuizInput({ ...valid, language: "zz" }).ok).toBe(false);
   });
 });
 
 describe("pluralQuizzes", () => {
   it("uses Czech plural forms", () => {
-    expect([0, 1, 2, 4, 5, 22].map(pluralQuizzes)).toEqual([
+    expect([0, 1, 2, 4, 5, 22].map((count) => pluralQuizzes(count))).toEqual([
       "0 kvízů",
       "1 kvíz",
       "2 kvízy",

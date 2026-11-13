@@ -1,0 +1,402 @@
+[
+  {
+    "title": "Gumball Character Test",
+    "url": "https://www.idrlabs.com/gumball-character/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "animované seriály",
+    "description": "Zjisti, komu z obyvatel Elmore se povahou podobáš.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "Monster High Character Test",
+    "url": "https://www.idrlabs.com/monster-high-character/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "animované seriály",
+    "description": "Najdi svůj protějšek mezi studenty školy Monster High.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "The Apothecary Diaries Test",
+    "url": "https://www.idrlabs.com/apothecary-diaries/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "anime",
+    "description": "Která postava z císařského dvora jedná nejvíc jako ty?",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "The Seven Deadly Sins Test",
+    "url": "https://www.idrlabs.com/seven-deadly-sins/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "anime",
+    "description": "Najdi svou nejbližší postavu z družiny rytířů v Británii.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "Moral Alignment Test",
+    "url": "https://www.idrlabs.com/moral-alignment/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "hry",
+    "description": "Které morální přesvědčení z Dungeons & Dragons vystihuje tvůj přístup?",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "Supernatural Character Test",
+    "url": "https://www.idrlabs.com/supernatural-character/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "seriály",
+    "description": "Porovnej svou povahu s lovci ze seriálu Supernatural.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "Gilmore Girls Test",
+    "url": "https://www.idrlabs.com/gilmore-girls/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "seriály",
+    "description": "Kdo ze Stars Hollow má povahu nejpodobnější té tvojí?",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "Gossip Girl Test",
+    "url": "https://www.idrlabs.com/gossip-girl/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "seriály",
+    "description": "Kterou postavu z newyorské party připomínají tvoje odpovědi?",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "Neon Genesis Evangelion Test",
+    "url": "https://www.idrlabs.com/neon-genesis-evangelion/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "anime",
+    "description": "Najdi mezi piloty a členy NERV postavu, která ti je nejbližší.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "My Little Pony Test",
+    "url": "https://www.idrlabs.com/my-little-pony/test.php",
+    "source": "IDRlabs",
+    "language": "en",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "animované seriály",
+    "description": "Zjisti, komu z Equestrie se nejvíc podobáš.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "薬屋のひとりごとテスト",
+    "url": "https://www.idrlabs.com/jp/apothecary-diaries/test.php",
+    "source": "IDRlabs",
+    "language": "ja",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "anime",
+    "description": "Která postava z císařského dvora jedná nejvíc jako ty?",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "Gossip Girlテスト",
+    "url": "https://www.idrlabs.com/jp/gossip-girl/test.php",
+    "source": "IDRlabs",
+    "language": "ja",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "seriály",
+    "description": "Kterou postavu z newyorské party připomínají tvoje odpovědi?",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "《药屋少女的呢喃》测试",
+    "url": "https://www.idrlabs.com/cn/apothecary-diaries/test.php",
+    "source": "IDRlabs",
+    "language": "zh",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "anime",
+    "description": "Která postava z císařského dvora jedná nejvíc jako ty?",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "道德阵营测试",
+    "url": "https://www.idrlabs.com/cn/moral-alignment/test.php",
+    "source": "IDRlabs",
+    "language": "zh",
+    "format": "text",
+    "types": [
+      "personality"
+    ],
+    "topic": "hry",
+    "description": "Které morální přesvědčení z Dungeons & Dragons vystihuje tvůj přístup?",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "チョコレートのなるほどクイズ",
+    "url": "https://www.meiji.co.jp/learned/factory/quiz/chocolate.html",
+    "source": "Meiji",
+    "language": "ja",
+    "format": "text",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "jídlo",
+    "description": "Pět otázek o kakaových bobech a výrobě čokolády.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "ヨーグルトのなるほどクイズ",
+    "url": "https://www.meiji.co.jp/learned/factory/quiz/yogurt.html",
+    "source": "Meiji",
+    "language": "ja",
+    "format": "text",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "jídlo",
+    "description": "Pět otázek o výrobě jogurtu a mléčném kvašení.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "牛乳のなるほどクイズ",
+    "url": "https://www.meiji.co.jp/learned/factory/quiz/milk.html",
+    "source": "Meiji",
+    "language": "ja",
+    "format": "text",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "jídlo",
+    "description": "Krátký kvíz o zpracování kravského mléka.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "日本の世界遺産から",
+    "url": "https://fanfun.jaxa.jp/topics/detail/10360.html",
+    "source": "JAXA",
+    "language": "ja",
+    "format": "image",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "zeměpis",
+    "description": "Poznej tři japonské památky UNESCO na satelitních snímcích.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "世界の夜景から",
+    "url": "https://fanfun.jaxa.jp/topics/detail/9523.html",
+    "source": "JAXA",
+    "language": "ja",
+    "format": "image",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "zeměpis",
+    "description": "Uhodni tři města z nočních snímků pořízených z ISS.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "各种知识 #1 General knowledge",
+    "url": "https://www.jetpunk.com/user-quizzes/1951634/1-general-knowledge",
+    "source": "JetPunk",
+    "language": "zh",
+    "format": "text",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "všeobecné znalosti",
+    "description": "Dvacet otázek z historie, sportu, přírody i videoher.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "各种知识 #2 General knowledge",
+    "url": "https://www.jetpunk.com/user-quizzes/1951634/2-general-knowledge",
+    "source": "JetPunk",
+    "language": "zh",
+    "format": "text",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "všeobecné znalosti",
+    "description": "Časovaný mix otázek z popkultury, historie, zeměpisu a astronomie.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "北京市轨道交通常识测试(简体中文)",
+    "url": "https://www.jetpunk.com/user-quizzes/2051802/quiz",
+    "source": "JetPunk",
+    "language": "zh",
+    "format": "text",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "doprava",
+    "description": "Patnáct otázek o linkách a stanicích pekingského metra.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "七大洲地图测验",
+    "url": "https://www.jetpunk.com/user-quizzes/1366600/quiz-5",
+    "source": "JetPunk",
+    "language": "zh",
+    "format": "image",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "zeměpis",
+    "description": "Na mapě přiřaď čínské názvy k sedmi kontinentům.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "常識冷知識的題目",
+    "url": "https://wordwall.net/tc/resource/70389813/常識冷知識的題目",
+    "source": "Wordwall",
+    "language": "zh",
+    "format": "text",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "všeobecné znalosti",
+    "description": "Rychlé otázky o lidském těle, přírodě a vesmíru.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  },
+  {
+    "title": "單元2 動物知多少?",
+    "url": "https://wordwall.net/tc/resource/99188136/單元2-動物知多少",
+    "source": "Wordwall",
+    "language": "zh",
+    "format": "image",
+    "types": [
+      "knowledge"
+    ],
+    "topic": "příroda",
+    "description": "Podle obrázků určuj, kde je zvíře a jak se pohybuje.",
+    "verification": {
+      "method": "Veřejně indexovaná stránka s otázkami nebo zadáním",
+      "checkedAt": "2026-11-13"
+    }
+  }
+]

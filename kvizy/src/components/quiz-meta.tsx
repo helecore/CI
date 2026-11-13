@@ -8,7 +8,7 @@ import {
   UserRoundIcon,
   type LucideIcon,
 } from "lucide-react";
-import type { QuizFormat, QuizLanguage, QuizType } from "@/lib/quiz";
+import type { QuizFormat, QuizType } from "@/lib/quiz";
 
 export const FORMAT_ICONS: Record<QuizFormat, LucideIcon> = {
   image: ImageIcon,
@@ -29,5 +29,3 @@ export const TYPE_COLORS: Record<QuizType, string> = {
   knowledge: "bg-sky-100 text-sky-900 ring-sky-200",
   logic: "bg-emerald-100 text-emerald-900 ring-emerald-200",
 };
-
-export const LANGUAGE_CODES: Record<QuizLanguage, string> = { cs: "CZ", en: "EN" };

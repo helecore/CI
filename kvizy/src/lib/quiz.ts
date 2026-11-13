@@ -1,28 +1,13 @@
+import { getMessages, interpolate, type Locale } from "./i18n";
+import { isQuizLanguage } from "./languages";
+import { parseHttpUrl } from "./quiz-url.mjs";
+
 export const FORMATS = ["image", "text", "mixed"] as const;
 export const QUIZ_TYPES = ["personality", "preference", "knowledge", "logic"] as const;
-export const LANGUAGES = ["cs", "en"] as const;
 
 export type QuizFormat = (typeof FORMATS)[number];
 export type QuizType = (typeof QUIZ_TYPES)[number];
-export type QuizLanguage = (typeof LANGUAGES)[number];
-
-export const FORMAT_LABELS: Record<QuizFormat, string> = {
-  image: "Obrázkový",
-  text: "Textový",
-  mixed: "Kombinovaný",
-};
-
-export const TYPE_LABELS: Record<QuizType, string> = {
-  personality: "Osobnostní",
-  preference: "Preferenční",
-  knowledge: "Znalostní",
-  logic: "Logický a hádankový",
-};
-
-export const LANGUAGE_LABELS: Record<QuizLanguage, string> = {
-  cs: "Čeština",
-  en: "Angličtina",
-};
+export type QuizLanguage = string;
 
 export type Quiz = {
   id: number;
@@ -35,6 +20,7 @@ export type Quiz = {
   topic: string | null;
   /** The link leads to a hub of several tests rather than to one quiz. */
   isCollection: boolean;
+  source?: string | null;
   clicks: number;
   createdAt: string;
 };
@@ -58,34 +44,7 @@ export function normalizeText(value: string): string {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
-/** Returns null unless the value is an absolute http(s) URL. */
-export function parseHttpUrl(value: string): URL | null {
-  try {
-    const url = new URL(value.trim());
-    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
-    if (!url.hostname.includes(".") && url.hostname !== "localhost") return null;
-    return url;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Key used to detect the same quiz submitted twice: ignores the scheme, a leading
- * "www.", the fragment, a trailing slash and the order of query parameters.
- */
-export function urlKey(value: string): string | null {
-  const url = parseHttpUrl(value);
-  if (!url) return null;
-  const host = url.hostname.toLowerCase().replace(/^www\./, "");
-  const port = url.port ? `:${url.port}` : "";
-  const path = url.pathname.replace(/\/+$/, "");
-  const params = [...url.searchParams.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-    .join("&");
-  return `${host}${port}${path}${params ? `?${params}` : ""}`;
-}
+export { urlKey } from "./quiz-url.mjs";
 
 function optionalText(value: unknown): string | null {
   if (typeof value !== "string") return null;
@@ -95,36 +54,38 @@ function optionalText(value: unknown): string | null {
 
 export function validateQuizInput(
   raw: unknown,
+  locale: Locale = "cs",
 ): { ok: true; value: QuizInput } | { ok: false; errors: QuizInputErrors } {
   const data = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
   const errors: QuizInputErrors = {};
+  const t = getMessages(locale);
 
   const title = optionalText(data.title);
-  if (!title) errors.title = "Vyplň název kvízu.";
-  else if (title.length > LIMITS.title) errors.title = `Název může mít nejvýš ${LIMITS.title} znaků.`;
+  if (!title) errors.title = t.titleMissing;
+  else if (title.length > LIMITS.title) errors.title = interpolate(t.titleLong, { limit: LIMITS.title });
 
   const urlText = typeof data.url === "string" ? data.url.trim() : "";
-  if (!urlText) errors.url = "Vlož přímý odkaz na kvíz.";
-  else if (urlText.length > LIMITS.url) errors.url = "Odkaz je příliš dlouhý.";
-  else if (!parseHttpUrl(urlText)) errors.url = "Odkaz musí začínat http:// nebo https:// a vést na web.";
+  if (!urlText) errors.url = t.urlMissing;
+  else if (urlText.length > LIMITS.url) errors.url = t.urlLong;
+  else if (!parseHttpUrl(urlText)) errors.url = t.urlInvalid;
 
   const format = data.format;
-  if (!FORMATS.includes(format as QuizFormat)) errors.format = "Vyber formát kvízu.";
+  if (!FORMATS.includes(format as QuizFormat)) errors.format = t.formatMissing;
 
   const language = data.language;
-  if (!LANGUAGES.includes(language as QuizLanguage)) errors.language = "Vyber jazyk kvízu.";
+  if (!isQuizLanguage(language)) errors.language = t.languageMissing;
 
   const typesRaw = Array.isArray(data.types) ? data.types : [];
   const types = QUIZ_TYPES.filter((t) => typesRaw.includes(t));
-  if (types.length === 0) errors.types = "Vyber alespoň jeden typ kvízu.";
+  if (types.length === 0) errors.types = t.typesMissing;
 
   const description = optionalText(data.description);
   if (description && description.length > LIMITS.description)
-    errors.description = `Popis může mít nejvýš ${LIMITS.description} znaků.`;
+    errors.description = interpolate(t.descriptionLong, { limit: LIMITS.description });
 
   const topicRaw = optionalText(data.topic);
   const topic = topicRaw ? topicRaw.toLowerCase() : null;
-  if (topic && topic.length > LIMITS.topic) errors.topic = `Téma může mít nejvýš ${LIMITS.topic} znaků.`;
+  if (topic && topic.length > LIMITS.topic) errors.topic = interpolate(t.topicLong, { limit: LIMITS.topic });
 
   if (Object.keys(errors).length > 0) return { ok: false, errors };
   return {
@@ -142,7 +103,8 @@ export function validateQuizInput(
 }
 
 /** Czech plural: 1 kvíz, 2–4 kvízy, 0 and 5+ kvízů. */
-export function pluralQuizzes(count: number): string {
+export function pluralQuizzes(count: number, locale: Locale = "cs"): string {
+  if (locale === "en") return `${count} ${count === 1 ? "quiz" : "quizzes"}`;
   if (count === 1) return "1 kvíz";
   if (count >= 2 && count <= 4) return `${count} kvízy`;
   return `${count} kvízů`;

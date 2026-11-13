@@ -1,3 +1,4 @@
+import { getMessages, interpolate, requestLocale } from "@/lib/i18n";
 import { connection } from "next/server";
 import { isRateLimited, isSameOrigin, MAX_BODY_BYTES } from "@/lib/guard";
 import { validateQuizInput } from "@/lib/quiz";
@@ -9,31 +10,33 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const locale = requestLocale(request);
+  const t = getMessages(locale);
   if (!isSameOrigin(request)) {
-    return Response.json({ error: "forbidden", message: "Požadavek z cizího webu." }, { status: 403 });
+    return Response.json({ error: "forbidden", message: t.forbidden }, { status: 403 });
   }
   if (isRateLimited(request, "create", 10, 60_000)) {
     return Response.json(
-      { error: "rate_limited", message: "Přidáváš kvízy moc rychle. Zkus to za chvíli." },
+      { error: "rate_limited", message: t.createRate },
       { status: 429 },
     );
   }
 
   const text = await request.text();
   if (text.length > MAX_BODY_BYTES) {
-    return Response.json({ error: "too_large", message: "Data formuláře jsou příliš velká." }, { status: 413 });
+    return Response.json({ error: "too_large", message: t.formLarge }, { status: 413 });
   }
   let body: unknown;
   try {
     body = JSON.parse(text);
   } catch {
-    return Response.json({ error: "invalid_json", message: "Neplatná data formuláře." }, { status: 400 });
+    return Response.json({ error: "invalid_json", message: t.formInvalid }, { status: 400 });
   }
 
-  const parsed = validateQuizInput(body);
+  const parsed = validateQuizInput(body, locale);
   if (!parsed.ok) {
     return Response.json(
-      { error: "validation", message: "Zkontroluj zvýrazněná pole.", fields: parsed.errors },
+      { error: "validation", message: t.validation, fields: parsed.errors },
       { status: 422 },
     );
   }
@@ -44,8 +47,8 @@ export async function POST(request: Request) {
       {
         error: "duplicate",
         message: result.duplicate
-          ? `Tento odkaz už v katalogu je jako „${result.duplicate.title}“.`
-          : "Tento odkaz už v katalogu je.",
+          ? interpolate(t.duplicateNamed, { title: result.duplicate.title })
+          : t.duplicate,
         existing: result.duplicate,
       },
       { status: 409 },

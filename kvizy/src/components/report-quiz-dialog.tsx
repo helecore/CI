@@ -1,5 +1,7 @@
 "use client";
 
+import { LocaleSwitch, useLocale } from "@/components/locale";
+import { LOCALE_HEADER } from "@/lib/i18n";
 import { useState } from "react";
 import { CircleCheckIcon } from "lucide-react";
 import { ChoiceGroup, ChoiceOption, Field } from "@/components/form-fields";
@@ -16,7 +18,6 @@ import { Textarea } from "@/components/ui/textarea";
 import type { Quiz } from "@/lib/quiz";
 import {
   REPORT_LIMITS,
-  REPORT_REASON_LABELS,
   REPORT_REASONS,
   validateReportInput,
   type ReportInputErrors,
@@ -40,16 +41,22 @@ export function ReportQuizDialog({ quiz, open, onOpenChange }: Props) {
 }
 
 function ReportForm({ quiz, onClose }: { quiz: Quiz; onClose: () => void }) {
+  const { locale, t } = useLocale();
   const [reason, setReason] = useState<ReportReason | "">("");
   const [note, setNote] = useState("");
-  const [errors, setErrors] = useState<ReportInputErrors>({});
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [fieldErrors, setErrors] = useState<ReportInputErrors>({});
+  const validation = validateReportInput({ reason, note }, locale);
+  const errors = validation.ok ? fieldErrors : {
+    reason: fieldErrors.reason && (validation.errors.reason ?? fieldErrors.reason),
+    note: fieldErrors.note && (validation.errors.note ?? fieldErrors.note),
+  };
+  const [serverError, setServerError] = useState<keyof Pick<typeof t, "reportInvalid" | "forbidden" | "quizMissing" | "reportLarge" | "validation" | "reportRate" | "reportError" | "reportNetwork"> | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const parsed = validateReportInput({ reason, note });
+    const parsed = validateReportInput({ reason, note }, locale);
     if (!parsed.ok) {
       setErrors(parsed.errors);
       return;
@@ -59,7 +66,7 @@ function ReportForm({ quiz, onClose }: { quiz: Quiz; onClose: () => void }) {
     try {
       const response = await fetch(`/api/quizzes/${quiz.id}/report`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", [LOCALE_HEADER]: locale },
         body: JSON.stringify(parsed.value),
       });
       if (response.status === 201) {
@@ -68,9 +75,12 @@ function ReportForm({ quiz, onClose }: { quiz: Quiz; onClose: () => void }) {
       }
       const data = (await response.json().catch(() => ({}))) as { message?: string; fields?: ReportInputErrors };
       if (response.status === 422) setErrors(data.fields ?? {});
-      setServerError(data.message ?? "Hlášení se nepodařilo odeslat. Zkus to znovu.");
+      const messages = {
+        400: "reportInvalid", 403: "forbidden", 404: "quizMissing", 413: "reportLarge", 422: "validation", 429: "reportRate",
+      } as const;
+      setServerError(messages[response.status as keyof typeof messages] ?? "reportError");
     } catch {
-      setServerError("Hlášení se nepodařilo odeslat. Zkontroluj připojení a zkus to znovu.");
+      setServerError("reportNetwork");
     } finally {
       setSubmitting(false);
     }
@@ -80,16 +90,16 @@ function ReportForm({ quiz, onClose }: { quiz: Quiz; onClose: () => void }) {
     return (
       <>
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Díky za hlášení</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{t.thanks}</DialogTitle>
           <DialogDescription>„{quiz.title}“</DialogDescription>
         </DialogHeader>
         <p role="status" className="flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-3 text-emerald-900">
           <CircleCheckIcon className="mt-0.5 size-5 shrink-0" aria-hidden />
-          Hlášení jsme uložili. Správce se na kvíz podívá; do té doby v katalogu zůstává.
+          {t.reportSaved}
         </p>
         <DialogFooter>
           <Button type="button" size="lg" onClick={onClose}>
-            Zavřít
+            {t.close}
           </Button>
         </DialogFooter>
       </>
@@ -100,17 +110,20 @@ function ReportForm({ quiz, onClose }: { quiz: Quiz; onClose: () => void }) {
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-xl font-bold">Nahlásit kvíz</DialogTitle>
+        <div className="flex flex-wrap items-center justify-between gap-2 pr-8">
+          <DialogTitle className="text-xl font-bold">{t.report}</DialogTitle>
+          <LocaleSwitch />
+        </div>
         <DialogDescription className="text-base font-medium text-foreground">„{quiz.title}“</DialogDescription>
       </DialogHeader>
-      <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4" aria-label="Nahlásit kvíz">
-        <ChoiceGroup legend="Důvod *" error={errors.reason}>
+      <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4" aria-label={t.report}>
+        <ChoiceGroup legend={t.reasonField} error={errors.reason}>
           {REPORT_REASONS.map((value) => (
             <ChoiceOption
               key={value}
               type="radio"
               name="reason"
-              label={REPORT_REASON_LABELS[value]}
+              label={t.reasons[value]}
               checked={reason === value}
               onChange={() => {
                 setReason(value);
@@ -121,7 +134,7 @@ function ReportForm({ quiz, onClose }: { quiz: Quiz; onClose: () => void }) {
           ))}
         </ChoiceGroup>
 
-        <Field id="report-note" label={noteRequired ? "Doplnění *" : "Doplnění (nepovinné)"} error={errors.note}>
+        <Field id="report-note" label={noteRequired ? t.noteRequired : t.noteOptional} error={errors.note}>
           <Textarea
             id="report-note"
             value={note}
@@ -133,22 +146,22 @@ function ReportForm({ quiz, onClose }: { quiz: Quiz; onClose: () => void }) {
             }}
             aria-invalid={!!errors.note}
             rows={3}
-            placeholder={noteRequired ? "Stručně popiš, co je špatně" : "Co přesně nefunguje nebo nesedí?"}
+            placeholder={noteRequired ? t.noteRequiredPlaceholder : t.notePlaceholder}
           />
         </Field>
 
         {serverError && (
           <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {serverError}
+            {t[serverError]}
           </p>
         )}
 
         <DialogFooter>
           <Button type="button" variant="outline" size="lg" onClick={onClose}>
-            Zrušit
+            {t.cancel}
           </Button>
           <Button type="submit" size="lg" disabled={submitting} className="font-semibold">
-            {submitting ? "Odesílám…" : "Odeslat hlášení"}
+            {submitting ? t.sending : t.send}
           </Button>
         </DialogFooter>
       </form>

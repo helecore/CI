@@ -1,15 +1,18 @@
 "use client";
 
+import { LocaleSwitch, useLocale } from "@/components/locale";
+
 import { useMemo, useState } from "react";
 import { EyeIcon, FlameIcon, PlusIcon, RotateCcwIcon, SearchIcon, SparklesIcon, XIcon } from "lucide-react";
 import { AddQuizDialog } from "@/components/add-quiz-dialog";
 import { FilterChip, FilterGroup } from "@/components/filter-chip";
 import { HeroIllustration } from "@/components/hero-illustration";
 import { QuizCard } from "@/components/quiz-card";
-import { FORMAT_ICONS, LANGUAGE_CODES, TYPE_ICONS } from "@/components/quiz-meta";
+import { FORMAT_ICONS, TYPE_ICONS } from "@/components/quiz-meta";
 import { ReportQuizDialog } from "@/components/report-quiz-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { languageBadge, languageName } from "@/lib/languages";
 import { cn } from "@/lib/utils";
 import { useDoneQuizzes } from "@/lib/done-store";
 import {
@@ -22,17 +25,14 @@ import {
   type Filters,
 } from "@/lib/filter";
 import {
-  FORMAT_LABELS,
   FORMATS,
-  LANGUAGE_LABELS,
-  LANGUAGES,
   pluralQuizzes,
   QUIZ_TYPES,
-  TYPE_LABELS,
   type Quiz,
 } from "@/lib/quiz";
 
 export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
+  const { locale, t } = useLocale();
   const [quizzes, setQuizzes] = useState(initialQuizzes);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [hideDone, setHideDone] = useState(false);
@@ -41,6 +41,10 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
   const [reportQuiz, setReportQuiz] = useState<Quiz | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const { done, setDone } = useDoneQuizzes();
+
+  const languages = useMemo(() => [...new Set(quizzes.map((quiz) => quiz.language))].sort((a, b) =>
+    languageName(a, locale).localeCompare(languageName(b, locale), locale),
+  ), [quizzes, locale]);
 
   const matching = useMemo(() => filterQuizzes(quizzes, filters), [quizzes, filters]);
   const results = useMemo(() => withoutDone(matching, done, hideDone), [matching, done, hideDone]);
@@ -79,26 +83,29 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
     <>
       <header className="border-b border-violet-200/70 bg-lavender text-violet-950">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 pt-6 pb-8 sm:px-6 sm:pt-8 sm:pb-10">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="inline-flex items-center gap-2 text-lg font-extrabold tracking-tight sm:text-xl">
               <span className="grid size-9 place-items-center rounded-xl bg-violet-600 text-white shadow-sm">
                 <SparklesIcon className="size-5" aria-hidden />
               </span>
-              Kvízy pro partu
+              {t.brand}
             </p>
-            <Button size="lg" onClick={() => setAddOpen(true)} className="h-10 px-4 font-semibold shadow-sm">
-              <PlusIcon data-icon="inline-start" aria-hidden />
-              Přidat kvíz
-            </Button>
+            <div className="flex items-center gap-2">
+              <LocaleSwitch />
+              <Button size="lg" onClick={() => setAddOpen(true)} className="h-10 px-4 font-semibold shadow-sm">
+                <PlusIcon data-icon="inline-start" aria-hidden />
+                {t.add}
+              </Button>
+            </div>
           </div>
 
           <div className="grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_auto] lg:gap-12">
             <div className="flex flex-col gap-4">
               <h1 className="text-3xl font-black tracking-tight text-balance sm:text-5xl">
-                <label htmlFor="search">Najdi kvíz pro svou partu</label>
+                <label htmlFor="search">{t.search}</label>
               </h1>
               <p className="max-w-xl text-base text-violet-900/80 sm:text-lg">
-                Osobnostní testy, hádanky i poznávačky. Vyber podle nálady a otevři jedním kliknutím.
+                {t.intro}
               </p>
               <div className="relative max-w-2xl">
                 <SearchIcon className="absolute top-1/2 left-4 size-5 -translate-y-1/2 text-violet-700/70" aria-hidden />
@@ -107,7 +114,7 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
                   type="search"
                   value={filters.query}
                   onChange={(e) => setFilters((f) => ({ ...f, query: e.target.value }))}
-                  placeholder="Filmy, hádanky, jídlo…"
+                  placeholder={t.searchPlaceholder}
                   className="h-14 rounded-2xl border-violet-200 bg-white pr-12 pl-12 text-base text-foreground shadow-sm focus-visible:border-violet-400 md:text-lg"
                 />
                 {filters.query && (
@@ -115,7 +122,7 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
                     type="button"
                     onClick={() => setFilters((f) => ({ ...f, query: "" }))}
                     className="absolute top-1/2 right-3 grid size-8 -translate-y-1/2 place-items-center rounded-full text-muted-foreground hover:bg-muted"
-                    aria-label="Vymazat hledání"
+                    aria-label={t.clearSearch}
                   >
                     <XIcon className="size-4" />
                   </button>
@@ -129,37 +136,37 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-6 sm:px-6 sm:py-8">
         <section
-          aria-label="Filtry"
+          aria-label={t.filters}
           className="grid items-start gap-5 rounded-2xl bg-card p-4 ring-1 ring-border sm:p-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_auto] lg:gap-8"
         >
-          <FilterGroup title="Formát">
+          <FilterGroup title={t.format}>
             {FORMATS.map((format) => (
               <FilterChip
                 key={format}
-                label={FORMAT_LABELS[format]}
+                label={t.formats[format]}
                 icon={FORMAT_ICONS[format]}
                 pressed={filters.formats.includes(format)}
                 onToggle={() => setFilters((f) => ({ ...f, formats: toggleValue(f.formats, format) }))}
               />
             ))}
           </FilterGroup>
-          <FilterGroup title="Typ kvízu">
+          <FilterGroup title={t.quizType}>
             {QUIZ_TYPES.map((type) => (
               <FilterChip
                 key={type}
-                label={TYPE_LABELS[type]}
+                label={t.types[type]}
                 icon={TYPE_ICONS[type]}
                 pressed={filters.types.includes(type)}
                 onToggle={() => setFilters((f) => ({ ...f, types: toggleValue(f.types, type) }))}
               />
             ))}
           </FilterGroup>
-          <FilterGroup title="Jazyk">
-            {LANGUAGES.map((language) => (
+          <FilterGroup title={t.language}>
+            {languages.map((language) => (
               <FilterChip
                 key={language}
-                label={LANGUAGE_LABELS[language]}
-                code={LANGUAGE_CODES[language]}
+                label={languageName(language, locale)}
+                code={languageBadge(language)}
                 pressed={filters.languages.includes(language)}
                 onToggle={() => setFilters((f) => ({ ...f, languages: toggleValue(f.languages, language) }))}
               />
@@ -171,7 +178,7 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
           <section aria-labelledby="popular-heading" className="flex flex-col gap-4">
             <h2 id="popular-heading" className="flex items-center gap-2 text-2xl font-extrabold tracking-tight">
               <FlameIcon className="size-6 text-orange-500" aria-hidden />
-              Populární kvízy
+              {t.popular}
             </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="popular-list">
               {popular.map((quiz) => (
@@ -184,9 +191,9 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
           <section aria-labelledby="popular-heading" className="flex flex-col gap-2">
             <h2 id="popular-heading" className="flex items-center gap-2 text-2xl font-extrabold tracking-tight">
               <FlameIcon className="size-6 text-orange-500" aria-hidden />
-              Populární kvízy
+              {t.popular}
             </h2>
-            <p className="text-muted-foreground">Zatím nikdo nic neotevřel. Buďte první, kdo rozjede žebříček!</p>
+            <p className="text-muted-foreground">{t.noPopular}</p>
           </section>
         )}
 
@@ -194,9 +201,9 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <h2 id="results-heading" className="text-2xl font-extrabold tracking-tight">
-                {active ? "Výsledky" : "Všechny kvízy"}{" "}
+                {active ? t.results : t.all}{" "}
                 <span className="text-base font-semibold text-muted-foreground" data-testid="result-count" aria-live="polite">
-                  {active ? `Nalezeno: ${pluralQuizzes(results.length)}` : pluralQuizzes(results.length)}
+                  {active ? `${t.found} ${pluralQuizzes(results.length, locale)}` : pluralQuizzes(results.length, locale)}
                 </span>
               </h2>
               <HideDoneSwitch checked={hideDone} onChange={setHideDone} doneCount={done.size} />
@@ -204,31 +211,31 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
             {active && (
               <Button variant="outline" size="lg" onClick={() => setFilters(EMPTY_FILTERS)}>
                 <RotateCcwIcon data-icon="inline-start" aria-hidden />
-                Vymazat hledání a filtry
+                {t.clearFilters}
               </Button>
             )}
           </div>
 
           {results.length === 0 ? (
             <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-border px-6 py-12 text-center">
-              <p className="text-lg font-bold">Tady nic není.</p>
+              <p className="text-lg font-bold">{t.nothing}</p>
               {hiddenDone > 0 ? (
                 <>
                   <p className="text-muted-foreground" data-testid="empty-message">
-                    Všechny kvízy, které odpovídají hledání a filtrům, máš hotové.
+                    {t.allDone}
                   </p>
                   <Button variant="outline" onClick={() => setHideDone(false)}>
                     <EyeIcon data-icon="inline-start" aria-hidden />
-                    Zobrazit hotové
+                    {t.showDone}
                   </Button>
                 </>
               ) : (
                 <>
                   <p className="text-muted-foreground" data-testid="empty-message">
-                    Žádný kvíz neodpovídá hledání a filtrům. Zkus jiné slovo nebo uber filtry.
+                    {t.noMatch}
                   </p>
                   <Button variant="outline" onClick={() => setFilters(EMPTY_FILTERS)}>
-                    Vymazat hledání a filtry
+                    {t.clearFilters}
                   </Button>
                 </>
               )}
@@ -250,7 +257,7 @@ export function Catalog({ initialQuizzes }: { initialQuizzes: Quiz[] }) {
       </main>
 
       <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        Kvízy se otevírají na původních webech v nové záložce.
+        {t.footer}
       </footer>
 
       <AddQuizDialog open={addOpen} onOpenChange={setAddOpen} quizzes={quizzes} onCreated={handleCreated} />
@@ -268,6 +275,7 @@ function HideDoneSwitch({
   onChange: (value: boolean) => void;
   doneCount: number;
 }) {
+  const { t } = useLocale();
   return (
     <button
       type="button"
@@ -290,7 +298,7 @@ function HideDoneSwitch({
           )}
         />
       </span>
-      Skrýt hotové
+      {t.hideDone}
       <span className="text-muted-foreground tabular-nums" data-testid="done-count">
         ({doneCount})
       </span>

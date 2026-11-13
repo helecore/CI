@@ -4,23 +4,13 @@
 // published migration never changes. Every insert skips URLs already in the database, so running
 // the import again adds no duplicates.
 import { readFile, writeFile } from "node:fs/promises";
+import { urlKey } from "../src/lib/quiz-url.mjs";
 
 const FORMATS = new Set(["text", "image", "mixed"]);
 const TYPES = new Set(["personality", "preference", "knowledge", "logic"]);
 const LANGUAGES = new Set(["cs", "en"]);
 const BASE_MIGRATION = "002_seed_quizzes";
 
-function urlKey(value) {
-  const url = new URL(value.trim());
-  const host = url.hostname.toLowerCase().replace(/^www\./, "");
-  const port = url.port ? `:${url.port}` : "";
-  const path = url.pathname.replace(/\/+$/, "");
-  const params = [...url.searchParams.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-    .join("&");
-  return `${host}${port}${path}${params ? `?${params}` : ""}`;
-}
 
 const lit = (v) => (v === null || v === undefined ? "null" : `'${String(v).replace(/'/g, "''")}'`);
 

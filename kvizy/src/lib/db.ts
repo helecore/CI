@@ -63,7 +63,23 @@ async function migrate(pool: pg.Pool): Promise<void> {
 
 async function startLocal(): Promise<PGlite> {
   const { PGlite } = await import("@electric-sql/pglite");
-  const db = new PGlite();
+  const localPath = process.env.QUIZ_LOCAL_DB_PATH?.trim();
+  const db = new PGlite(localPath || undefined);
+  if (localPath) {
+    try {
+      await applyMigrations({
+        async query(text, params) {
+          if (params?.length) return db.query<Record<string, unknown>>(text, params);
+          const results = await db.exec(text);
+          return { rows: (results.at(-1)?.rows ?? []) as Record<string, unknown>[] };
+        },
+      }, await readMigrations());
+      return db;
+    } catch (error) {
+      await db.close().catch(() => {});
+      throw error;
+    }
+  }
   for (const migration of await readMigrations()) {
     await db.exec(migration.sql);
   }

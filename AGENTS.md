@@ -7,6 +7,7 @@ Kořen repozitáře je Obsidian vault s poznámkami z kurzu MAS (synchronizuje h
 Všechny příkazy se spouštějí ve složce `kvizy/` (Node 22+).
 - Instalace: `npm install && npx playwright install chromium firefox`
 - Spuštění (vývoj): `npm run dev` → http://localhost:4387 (bez `DATABASE_URL` běží PGlite v paměti, katalog se naplní z migrací)
+- Import ověřených jednotlivých kvízů: `npm run import:quizzes` (lokální PGlite, sdílený testovací Postgres přes `QUIZ_IMPORT_DATABASE_URL`; postup je v `kvizy/README.md`).
 - Unit testy: `npm test`
 - E2E testy: `npm run test:e2e` (sestaví aplikaci a spustí ji na portu 4388 s čistou databází; Firefox slouží jako „jiný prohlížeč“)
 - Vše před commitem: `npm run check` (lint, typecheck, unit, E2E)

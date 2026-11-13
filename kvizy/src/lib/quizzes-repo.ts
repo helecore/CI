@@ -13,11 +13,12 @@ type QuizRow = {
   types: Quiz["types"];
   topic: string | null;
   is_collection: boolean;
+  source: string | null;
   clicks: number | string;
   created_at: Date | string;
 };
 
-const COLUMNS = "id, title, url, description, language, format, types, topic, is_collection, clicks, created_at";
+const COLUMNS = "id, title, url, description, language, format, types, topic, is_collection, source, clicks, created_at";
 
 function toQuiz(row: QuizRow): Quiz {
   return {
@@ -30,13 +31,14 @@ function toQuiz(row: QuizRow): Quiz {
     types: row.types,
     topic: row.topic,
     isCollection: row.is_collection,
+    source: row.source,
     clicks: Number(row.clicks),
     createdAt: new Date(row.created_at).toISOString(),
   };
 }
 
 export async function listQuizzes(): Promise<Quiz[]> {
-  const rows = await sql<QuizRow>(`select ${COLUMNS} from quizzes order by created_at desc, id desc`);
+  const rows = await sql<QuizRow>(`select ${COLUMNS} from quizzes where not is_hidden order by created_at desc, id desc`);
   return rows.map(toQuiz);
 }
 

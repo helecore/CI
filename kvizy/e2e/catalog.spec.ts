@@ -132,7 +132,7 @@ test("formulář ověří povinná pole a odkaz http/https", async ({ page }) =>
 
   await dialog.getByLabel("Přímý odkaz *").fill("ftp://example.com/kviz");
   await dialog.getByRole("button", { name: "Uložit kvíz" }).click();
-  await expect(dialog.getByText("Odkaz musí začínat http:// nebo https://")).toBeVisible();
+  await expect(dialog.getByText(/^Odkaz musí začínat http:\/\/ nebo https:\/\//)).toBeVisible();
 });
 
 test("odmítnutí duplicitního odkazu (i s jiným zápisem URL)", async ({ page, request }) => {
@@ -150,7 +150,7 @@ test("odmítnutí duplicitního odkazu (i s jiným zápisem URL)", async ({ page
   await expect(dialog.getByRole("status")).toContainText(`Tento odkaz už v katalogu je jako „${existing.title}“`);
   await dialog.getByText("Textový", { exact: true }).click();
   await dialog.getByText("Znalostní", { exact: true }).click();
-  await dialog.getByText("Čeština", { exact: true }).click();
+  await dialog.getByRole("combobox", { name: "Jazyk" }).selectOption("cs");
   await dialog.getByRole("button", { name: "Uložit kvíz" }).click();
   await expect(dialog.getByRole("alert").first()).toContainText("už v katalogu je");
   await expect(dialog).toBeVisible();
@@ -185,7 +185,7 @@ test("kvíz přidaný v jednom prohlížeči (Chromium) je po obnovení vidět i
   await dialog.getByText("Obrázkový", { exact: true }).click();
   await dialog.getByText("Znalostní", { exact: true }).click();
   await dialog.getByText("Logický a hádankový", { exact: true }).click();
-  await dialog.getByText("Čeština", { exact: true }).click();
+  await dialog.getByRole("combobox", { name: "Jazyk" }).selectOption("cs");
   await dialog.getByLabel("Téma (nepovinné)").fill("Hudba");
   await dialog.getByLabel("Krátký popis (nepovinné)").fill("Písničky zakódované do emoji.");
   await dialog.getByRole("button", { name: "Uložit kvíz" }).click();

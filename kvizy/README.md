@@ -53,3 +53,10 @@ Bez proměnné (nebo s klíčem kratším než 24 znaků) je `/api/admin/reports
 - Plán Hobby má limit 100 nasazení denně a zrušené (ignorované) buildy se do něj počítají. Pokud Obsidian Git pushuje velmi často, nastav v Obsidianu **Settings → Obsidian Git → Auto commit-and-sync interval** aspoň na 15 minut.
 - Preview nasazení (větve z pull requestů) používají stejnou databázi jako produkce a jsou chráněná přihlášením do Vercelu. Migrace jsou jen aditivní, takže to produkci nerozbije.
 - Bez `DATABASE_URL` na Vercelu aplikace záměrně selže s chybovou stránkou, místo aby tiše ukládala data do dočasné paměti.
+
+## Import jednotlivých kvízů
+
+- `npm run import:quizzes` spouští import z `data/individual-quizzes.json` do lokálního PGlite v adresáři `.quiz-import-db`. Každé spuštění vypíše podle zdroje a jazyka počty vložených a již existujících kvízů.
+- Pro lokální prohlídku importu spusťte `npm run dev` s proměnnou `QUIZ_LOCAL_DB_PATH=.quiz-import-db` a bez nastavené `DATABASE_URL` i `POSTGRES_URL`. Zastavte vývojový server před dalším importem do stejného adresáře. Bez `QUIZ_LOCAL_DB_PATH` používá vývojový server původní databázi v paměti.
+- Pro import do sdíleného testovacího Postgresu nastavte `QUIZ_IMPORT_DATABASE_URL` na jeho připojení. Import tuto proměnnou čte výslovně. Web pak čte stejnou databázi přes své běžné `DATABASE_URL`.
+- Import pracuje s přímými odkazy v manifestu. Při opakování zachová identifikátory, kliknutí a hlášení. Po importu testů IDRlabs se jeho rozcestník skryje v katalogu a zůstane dostupný ve správě existujících hlášení.

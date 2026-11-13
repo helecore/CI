@@ -43,3 +43,6 @@ next-env.d.ts
 # playwright
 /test-results/
 /playwright-report/
+
+# Local persistent database used to verify quiz imports
+/.quiz-import-db/
