@@ -1,0 +1,39 @@
+name: Local quiz preview
+on: [push]
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: kvizy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run import:quizzes
+      - name: Build and prepare localhost files
+        shell: pwsh
+        run: |
+          (Get-Content next.config.ts -Raw).Replace('const nextConfig: NextConfig = {', 'const nextConfig: NextConfig = { output: "standalone",') | Set-Content next.config.ts
+          npm run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $bundle = '.next/standalone'
+          Copy-Item .next/static "$bundle/.next/static" -Recurse -Force
+          Copy-Item .quiz-import-db "$bundle/quiz-preview-db" -Recurse -Force
+          if (!(Test-Path "$bundle/migrations")) { Copy-Item migrations "$bundle/migrations" -Recurse }
+          Compress-Archive -Path "$bundle/*" -DestinationPath preview.zip -CompressionLevel Fastest
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path preview.zip))
+          try {
+            if (!($archive.Entries.FullName -match '^\.next[/\\]')) { throw "Missing Next.js build" }
+          } finally { $archive.Dispose() }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kvizy-windows-local
+          path: kvizy/preview.zip
+          retention-days: 1
