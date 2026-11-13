@@ -128,7 +128,7 @@ test("formulář ověří povinná pole a odkaz http/https", async ({ page }) =>
   await expect(dialog.getByText("Vlož přímý odkaz na kvíz.")).toBeVisible();
   await expect(dialog.getByText("Vyber formát kvízu.")).toBeVisible();
   await expect(dialog.getByText("Vyber alespoň jeden typ kvízu.")).toBeVisible();
-  await expect(dialog.getByText("Vyber jazyk kvízu.")).toBeVisible();
+  await expect(dialog.getByRole("alert").filter({ hasText: "Vyber jazyk kvízu." })).toBeVisible();
 
   await dialog.getByLabel("Přímý odkaz *").fill("ftp://example.com/kviz");
   await dialog.getByRole("button", { name: "Uložit kvíz" }).click();

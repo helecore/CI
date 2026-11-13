@@ -1,4 +1,4 @@
-export default {
+const cs = {
   "brand": "Kvízy pro partu",
   "meta": "Najdi online kvíz, na který má tvoje parta zrovna náladu.",
   "interfaceLanguage": "Jazyk rozhraní",
@@ -124,3 +124,5 @@ export default {
     "other": "Jiné"
   }
 };
+
+export default cs;
