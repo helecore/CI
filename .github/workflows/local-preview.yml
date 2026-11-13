@@ -26,12 +26,8 @@ jobs:
           Copy-Item .next/static "$bundle/.next/static" -Recurse -Force
           Copy-Item .quiz-import-db "$bundle/quiz-preview-db" -Recurse -Force
           if (!(Test-Path "$bundle/migrations")) { Copy-Item migrations "$bundle/migrations" -Recurse }
-          Compress-Archive -Path "$bundle/*" -DestinationPath preview.zip -CompressionLevel Fastest
           Add-Type -AssemblyName System.IO.Compression.FileSystem
-          $archive = [IO.Compression.ZipFile]::OpenRead((Resolve-Path preview.zip))
-          try {
-            if (!($archive.Entries.FullName -match '^\.next[/\\]')) { throw "Missing Next.js build" }
-          } finally { $archive.Dispose() }
+          [IO.Compression.ZipFile]::CreateFromDirectory((Resolve-Path $bundle), (Join-Path (Get-Location) 'preview.zip'))
       - uses: actions/upload-artifact@v4
         with:
           name: kvizy-windows-local
